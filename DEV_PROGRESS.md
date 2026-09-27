@@ -2,8 +2,8 @@
 
 ## Current
 - Branch: `dev`
-- Version: `0.1.0-dev`
-- Development head: `d8d78eaeb284f9986a0d2702269f7ab89260560f`
+- Version: `0.1.1-dev`
+- Development head: `64984801331bf589fe63651efd66790a3a093c36`
 - Stable baseline: None.
 - Goal: Build a database-only companion for brues' pfQuest that regenerates Vanilla world data from current VMaNGOS sources.
 - Current scope boundary: VMaNGOS DB only. No Turtle support, no pfQuest fork, no UI/gameplay features.
@@ -14,8 +14,8 @@
 - `pfQuest` remains wholly owned/updated by brues; this repository never modifies or redistributes a pfQuest fork.
 - This addon loads after `pfQuest` via `## Dependencies: pfQuest`.
 - Generated DB files write into `pfQuest_vMangosDB_data`, never directly into `pfDB`.
-- Runtime application replaces relevant existing pfQuest tables in place, preserving table identity for pfQuest modules that cached references during startup.
-- After replacement, rebuild pfQuest's DB shortcuts and derived indexes.
+- `loader.lua` replaces relevant existing pfQuest tables in place, preserving table identity for pfQuest modules that cached references during startup.
+- After replacement, the loader calls `pfDatabase:Reload()`, then rebuilds name/static-reject indexes when those hooks exist.
 - Heavy extraction is performed by GitHub Actions/MariaDB; local MariaDB is not required for normal users.
 
 ### Invariants
@@ -23,42 +23,69 @@
 - Never add Turtle-specific data to this repository.
 - Never require a modified pfQuest install.
 - Preserve brues' current `overwrites.lua` corrections after extraction.
-- If no generated DB is present, the development addon must no-op rather than clearing pfQuest data.
+- If no generated DB is present, the addon no-ops rather than clearing pfQuest data.
 
 ### Protocol / Data Model
 - Generated namespace: `pfQuest_vMangosDB_data`.
 - Source metadata: `pfQuest_vMangosDB_source`.
 - Schema version: 1.
 - Replaced datasets: items, units, objects, quests, quests-itemreq, refloot, meta.
-- Localized entity/quest text comes from extractor locale outputs.
+- Current packaged locale: enUS.
 - Excluded generated datasets: zones, minimap, areatrigger, professions.
 
 ### Active Decisions
 - VMaNGOS snapshot source: GitHub release tag `db_latest`.
-- Current observed snapshot: `Development Database Snapshot (2026-09-06)`, asset `db-13b49dc.zip`.
-- Current observed brues pfQuest head: `6b2283f7a53ba92c83c21a13eb7f7b9ca3b53658` (2026-09-08).
-- Current observed VMaNGOS development head: `4b350a09fca8b5797975e343ae6300fbb5f9937b` (2026-09-15).
-- brues' extractor will be patched only inside the temporary CI clone to disable its TBC expansion entry.
+- Generated source snapshot: `Development Database Snapshot (2026-09-06)`, asset `db-13b49dc.zip`.
+- Generated VMaNGOS core commit: `4b350a09fca8b5797975e343ae6300fbb5f9937b`.
+- Generated brues pfQuest commit: `6b2283f7a53ba92c83c21a13eb7f7b9ca3b53658`.
+- brues' extractor is patched only inside the temporary CI clone to disable its TBC expansion entry.
+- Current CI uses Lua 5.3 for the extractor because the current pfQuest extractor requires language/runtime behaviour beyond the original Lua 5.1 setup.
+- Only currently valid extractor-performance indexes are created; obsolete VMaNGOS spawn-entry indexes are not used.
 
 ## Recent Relevant Commits
-- `30a839c` — initialize main repository.
-- `d8d78ea` — add canonical development rulebook.
+- `6498480` — generated and committed the first VMaNGOS DB refresh; bumped to `0.1.1-dev`.
+- `7350bfb` — started the optimized regeneration path independently.
+- `1a331b6` — applied valid current extractor performance indexes.
+- `3acf071` / `71cd6d9` — switched extractor execution to Lua 5.3.
+- `2fba2c5` — removed obsolete extractor-only indexes.
+- `161b26b` — added MariaDB client compatibility library.
+- `4ace485` — added automated VMaNGOS regeneration.
+- `4f62a3b` — added safe pfQuest database overlay runtime scaffold.
+- `2062ab3` — established development handoff state.
+- `d8d78ea` — added canonical development rulebook.
+- `30a839c` — initialized main repository.
 
 ## Completed / User-Verified
 - Architecture agreed: one `pfQuest_vMangosDB` companion repository; Turtle explicitly excluded.
+- All regeneration/runtime tooling from this development session is persisted on the `dev` branch; it does not depend on chat context.
 
 ## Implemented / Awaiting Runtime Test
-- Development workflow documentation only.
-- Runtime loader and updater tooling not yet committed.
+- Safe in-place runtime DB overlay.
+- VMaNGOS snapshot download/import.
+- Current VMaNGOS migrations.
+- Current brues pfQuest extractor execution.
+- Vanilla-only extractor patching in the temporary CI clone.
+- Generated-data namespace rewrite and brues overwrite reapplication.
+- Generated DB validation.
+- Automatic dev patch version bump on DB refresh.
+- Automatic commit of generated DB back to `dev`.
+- First successful full GitHub Actions regeneration:
+  - Run: `36321208408`
+  - Result: success.
+  - Generated at: `2026-09-27T13:24:16+00:00`
+  - DB commit: `64984801331bf589fe63651efd66790a3a093c36`
 
 ## Static / Automated Checks
+- Full remote MariaDB import/extractor pipeline completed successfully.
+- Generated DB validation completed successfully in CI.
+- Loader/source Lua syntax smoke tests completed in the successful workflow.
 - Source inspection confirmed brues' database reload/index rebuild hooks and ClassicAPI-owned geometry paths.
-- Local full extractor run unavailable in the chat environment because MariaDB/LuaSQL packages could not be installed from blocked Debian mirrors.
 
 ## Current Issues
-- First CI extraction may expose dependency/schema drift.
-- No generated DB exists yet.
 - No in-game runtime test has occurred.
+- `source.lua` currently records `vmangos_snapshot = "unknown"` even though the asset is correctly recorded as `db-13b49dc.zip`; this is a metadata parsing bug only and does not affect the generated DB.
+- The generated DB has not yet been diff-reviewed against brues' bundled DB for surprising changes.
+- Only enUS locale data is packaged in the initial development build.
 
 ## Testing
 
@@ -66,22 +93,22 @@
 - Version/commit: None.
 - Passed: None.
 - Failed: None.
-- Not tested: All runtime behaviour.
+- Not tested: All in-game behaviour.
 
 ### Next Runtime Test
-1. Produce a non-empty generated DB on `dev`.
-2. Install exact generated `dev` build beside current brues pfQuest.
-3. Confirm login has no Lua errors.
-4. Confirm pfQuest browser/search still works.
-5. Compare known NPC/object/quest locations against stock brues DB.
-6. Confirm ClassicAPI map/zone behaviour is unchanged.
+1. Fix the snapshot-id metadata parser.
+2. Produce a concise generated-vs-brues DB diff summary.
+3. Install exact `0.1.1-dev` / `6498480` beside current brues pfQuest on SoloCraft.
+4. Confirm login has no Lua errors.
+5. Confirm pfQuest browser/search still works.
+6. Compare several known NPC/object/quest locations against stock brues DB.
+7. Confirm ClassicAPI map/zone behaviour is unchanged.
 
 ## Planned / Next Work
-- Commit runtime scaffold and safe in-place DB loader.
-- Commit reproducible VMaNGOS extraction/package tooling.
-- Add GitHub Actions updater and inspect its first run.
-- Produce a DB diff summary against brues' bundled database.
+- Fix `vmangos_snapshot` metadata extraction.
+- Add/produce DB diff reporting against brues' bundled database.
 - Runtime-test on SoloCraft.
+- Add other locales after the regeneration/runtime path is proven.
 - Promote a tested build to `main`.
 
 ## Deferred / Out of Scope
@@ -96,4 +123,4 @@
 - External/runtime prerequisites: brues-code/pfQuest and its required ClassicAPI setup.
 
 ## Exact Next Step
-Commit the runtime scaffold and loader, then add the automated VMaNGOS regeneration pipeline.
+Start from `dev` commit `64984801331bf589fe63651efd66790a3a093c36`; fix the `vmangos_snapshot` metadata parser, generate a DB diff summary against brues' bundled DB, then perform the first SoloCraft runtime test before any promotion to `main`.
