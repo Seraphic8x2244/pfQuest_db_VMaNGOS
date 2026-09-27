@@ -1,0 +1,24 @@
+## Interface: 11200
+## Title: pfQuest_vMangosDB-dev
+## Author: Seraphic8x2244
+## Notes: Current VMaNGOS database companion for brues-code/pfQuest
+## Version: 0.1.0-dev
+## Dependencies: pfQuest
+
+db\init.lua
+db\items.lua
+db\units.lua
+db\objects.lua
+db\refloot.lua
+db\quests-itemreq.lua
+db\quests.lua
+db\meta.lua
+
+db\enUS\items.lua
+db\enUS\units.lua
+db\enUS\objects.lua
+db\enUS\quests.lua
+
+db\overwrites.lua
+source.lua
+loader.lua
