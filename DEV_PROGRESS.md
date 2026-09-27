@@ -2,8 +2,8 @@
 
 ## Current
 - Branch: `dev`
-- Version: `0.1.1-dev`
-- Development head: `64984801331bf589fe63651efd66790a3a093c36`
+- Version: `0.1.2-dev`
+- Development head: `22e7c4a63536abedc2533a4033b0dfdf9b3b5ecf`
 - Stable baseline: None.
 - Goal: Build a database-only companion for brues' pfQuest that regenerates Vanilla world data from current VMaNGOS sources.
 - Current scope boundary: VMaNGOS DB only. No Turtle support, no pfQuest fork, no UI/gameplay features.
@@ -35,7 +35,7 @@
 
 ### Active Decisions
 - VMaNGOS snapshot source: GitHub release tag `db_latest`.
-- Generated source snapshot: `Development Database Snapshot (2026-09-06)`, asset `db-13b49dc.zip`.
+- Generated source snapshot: `Development Database Snapshot (2026-09-06)`, asset `db-13b49dc.zip`, snapshot id `13b49dc`.
 - Generated VMaNGOS core commit: `4b350a09fca8b5797975e343ae6300fbb5f9937b`.
 - Generated brues pfQuest commit: `6b2283f7a53ba92c83c21a13eb7f7b9ca3b53658`.
 - brues' extractor is patched only inside the temporary CI clone to disable its TBC expansion entry.
@@ -43,6 +43,7 @@
 - Only currently valid extractor-performance indexes are created; obsolete VMaNGOS spawn-entry indexes are not used.
 
 ## Recent Relevant Commits
+- `22e7c4a` — fixed VMaNGOS snapshot-id parsing, corrected current source metadata, bumped to `0.1.2-dev`, and added `DB_DIFF_REPORT.md`.
 - `6498480` — generated and committed the first VMaNGOS DB refresh; bumped to `0.1.1-dev`.
 - `7350bfb` — started the optimized regeneration path independently.
 - `1a331b6` — applied valid current extractor performance indexes.
@@ -74,17 +75,24 @@
   - Result: success.
   - Generated at: `2026-09-27T13:24:16+00:00`
   - DB commit: `64984801331bf589fe63651efd66790a3a093c36`
+- Snapshot metadata parser fixed:
+  - `db-13b49dc.zip` now parses as `13b49dc`.
+  - Current `source.lua` metadata corrected without regenerating unchanged DB content.
+- Generated-vs-bundled DB review completed and recorded in `DB_DIFF_REPORT.md`.
+- Exact first SoloCraft test build prepared: `0.1.2-dev` / `22e7c4a63536abedc2533a4033b0dfdf9b3b5ecf`.
 
 ## Static / Automated Checks
-- Full remote MariaDB import/extractor pipeline completed successfully.
+- Full remote MariaDB import/extractor pipeline completed successfully for the underlying generated DB.
 - Generated DB validation completed successfully in CI.
-- Loader/source Lua syntax smoke tests completed in the successful workflow.
+- Loader/source Lua syntax smoke tests completed in the successful regeneration workflow.
 - Source inspection confirmed brues' database reload/index rebuild hooks and ClassicAPI-owned geometry paths.
+- Snapshot parser expression independently checked against `db-13b49dc.zip` and returns `13b49dc`.
+- Diff review confirms quest ID coverage is unchanged at 4,433; the largest delta is object coverage plus coordinate/source mappings.
+- No redundant full regeneration was run for `0.1.2-dev`; the DB payload is the already-validated `6498480` output and this revision changes parser/source metadata plus documentation only.
 
 ## Current Issues
 - No in-game runtime test has occurred.
-- `source.lua` currently records `vmangos_snapshot = "unknown"` even though the asset is correctly recorded as `db-13b49dc.zip`; this is a metadata parsing bug only and does not affect the generated DB.
-- The generated DB has not yet been diff-reviewed against brues' bundled DB for surprising changes.
+- The fixed snapshot parser has not yet been exercised by a fresh full regeneration run; the current metadata value was corrected directly from the known asset name.
 - Only enUS locale data is packaged in the initial development build.
 
 ## Testing
@@ -96,18 +104,17 @@
 - Not tested: All in-game behaviour.
 
 ### Next Runtime Test
-1. Fix the snapshot-id metadata parser.
-2. Produce a concise generated-vs-brues DB diff summary.
-3. Install exact `0.1.1-dev` / `6498480` beside current brues pfQuest on SoloCraft.
-4. Confirm login has no Lua errors.
-5. Confirm pfQuest browser/search still works.
-6. Compare several known NPC/object/quest locations against stock brues DB.
-7. Confirm ClassicAPI map/zone behaviour is unchanged.
+1. Install exact `0.1.2-dev` / `22e7c4a63536abedc2533a4033b0dfdf9b3b5ecf` as folder `pfQuest_vMangosDB` beside current brues pfQuest on SoloCraft.
+2. Confirm login completes with no Lua errors.
+3. Confirm pfQuest browser/search still works.
+4. Check several NPC/object/quest locations, prioritizing objects because that is the largest DB delta.
+5. Confirm quest display/tracking still works on at least one active quest.
+6. Confirm ClassicAPI map/zone behaviour is unchanged.
+7. Record the result against this exact version/commit before any further addon-affecting revision.
 
 ## Planned / Next Work
-- Fix `vmangos_snapshot` metadata extraction.
-- Add/produce DB diff reporting against brues' bundled database.
-- Runtime-test on SoloCraft.
+- Runtime-test `0.1.2-dev` on SoloCraft.
+- Exercise the fixed snapshot parser in the next real regeneration.
 - Add other locales after the regeneration/runtime path is proven.
 - Promote a tested build to `main`.
 
@@ -123,4 +130,4 @@
 - External/runtime prerequisites: brues-code/pfQuest and its required ClassicAPI setup.
 
 ## Exact Next Step
-Start from `dev` commit `64984801331bf589fe63651efd66790a3a093c36`; fix the `vmangos_snapshot` metadata parser, generate a DB diff summary against brues' bundled DB, then perform the first SoloCraft runtime test before any promotion to `main`.
+Install and test exact `0.1.2-dev` / `22e7c4a63536abedc2533a4033b0dfdf9b3b5ecf` on SoloCraft, then record the point-by-point runtime result before any promotion to `main`.
