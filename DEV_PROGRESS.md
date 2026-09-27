@@ -2,21 +2,24 @@
 
 ## Current
 - Branch: `dev`
-- Version: `0.1.2-dev`
-- Development head: `22e7c4a63536abedc2533a4033b0dfdf9b3b5ecf`
+- Version: `0.1.3-dev`
+- Development head: `77c418b49d5c1f2049a7ee10df311790cb7e2326`
 - Stable baseline: None.
+- Repository/addon identity: `pfQuest_db_VMaNGOS`.
 - Goal: Build a database-only companion for brues' pfQuest that regenerates Vanilla world data from current VMaNGOS sources.
-- Current scope boundary: VMaNGOS DB only. No Turtle support, no pfQuest fork, no UI/gameplay features.
+- Current scope boundary: current VMaNGOS DB only. No SoloCraft-specific historical DB, Turtle support, pfQuest fork, or UI/gameplay features.
 
 ## Current Design / Development Contract
 
 ### Architecture / Ownership
 - `pfQuest` remains wholly owned/updated by brues; this repository never modifies or redistributes a pfQuest fork.
 - This addon loads after `pfQuest` via `## Dependencies: pfQuest`.
-- Generated DB files write into `pfQuest_vMangosDB_data`, never directly into `pfDB`.
+- Public generated namespace: `pfQuest_db_VMaNGOS_data`.
+- Source metadata: `pfQuest_db_VMaNGOS_source`.
 - `loader.lua` replaces relevant existing pfQuest tables in place, preserving table identity for pfQuest modules that cached references during startup.
 - After replacement, the loader calls `pfDatabase:Reload()`, then rebuilds name/static-reject indexes when those hooks exist.
 - Heavy extraction is performed by GitHub Actions/MariaDB; local MariaDB is not required for normal users.
+- The current validated `13b49dc` payload is reused unchanged. Its generated files still target the former `pfQuest_vMangosDB_data` symbol, so `db/init.lua` supplies a compatibility alias to the new namespace. The next real DB regeneration will emit `pfQuest_db_VMaNGOS_data` directly and naturally remove that transitional dependency.
 
 ### Invariants
 - Never replace brues' ClassicAPI-owned zone, minimap-size, or area-trigger geometry data.
@@ -26,8 +29,6 @@
 - If no generated DB is present, the addon no-ops rather than clearing pfQuest data.
 
 ### Protocol / Data Model
-- Generated namespace: `pfQuest_vMangosDB_data`.
-- Source metadata: `pfQuest_vMangosDB_source`.
 - Schema version: 1.
 - Replaced datasets: items, units, objects, quests, quests-itemreq, refloot, meta.
 - Current packaged locale: enUS.
@@ -41,84 +42,81 @@
 - brues' extractor is patched only inside the temporary CI clone to disable its TBC expansion entry.
 - Current CI uses Lua 5.3 for the extractor because the current pfQuest extractor requires language/runtime behaviour beyond the original Lua 5.1 setup.
 - Only currently valid extractor-performance indexes are created; obsolete VMaNGOS spawn-entry indexes are not used.
+- Addon list/chat branding follows pfQuest's teal/white `pf` / `Quest` colouring.
 
 ## Recent Relevant Commits
+- `77c418b` — renamed addon identity to `pfQuest_db_VMaNGOS`, bumped to `0.1.3-dev`, updated regeneration tooling/validator, and applied pfQuest-style title/chat colours without regenerating DB content.
+- `7e2d14d` — documentation-only checkpoint for the previous SoloCraft test build.
 - `22e7c4a` — fixed VMaNGOS snapshot-id parsing, corrected current source metadata, bumped to `0.1.2-dev`, and added `DB_DIFF_REPORT.md`.
 - `6498480` — generated and committed the first VMaNGOS DB refresh; bumped to `0.1.1-dev`.
-- `7350bfb` — started the optimized regeneration path independently.
-- `1a331b6` — applied valid current extractor performance indexes.
-- `3acf071` / `71cd6d9` — switched extractor execution to Lua 5.3.
-- `2fba2c5` — removed obsolete extractor-only indexes.
-- `161b26b` — added MariaDB client compatibility library.
 - `4ace485` — added automated VMaNGOS regeneration.
 - `4f62a3b` — added safe pfQuest database overlay runtime scaffold.
-- `2062ab3` — established development handoff state.
 - `d8d78ea` — added canonical development rulebook.
-- `30a839c` — initialized main repository.
 
 ## Completed / User-Verified
-- Architecture agreed: one `pfQuest_vMangosDB` companion repository; Turtle explicitly excluded.
-- All regeneration/runtime tooling from this development session is persisted on the `dev` branch; it does not depend on chat context.
+- Architecture agreed: one current-VMaNGOS database companion; Turtle explicitly excluded.
+- On SoloCraft, user verified the previous `0.1.2-dev` / `22e7c4a` build loaded successfully:
+  - `pfQuest_vMangosDB_source ~= nil` returned `true`.
+  - source snapshot reported `13b49dc`.
+- User then removed that addon from the local WoW installation; the broader six-point runtime checklist was not completed.
 
 ## Implemented / Awaiting Runtime Test
 - Safe in-place runtime DB overlay.
-- VMaNGOS snapshot download/import.
-- Current VMaNGOS migrations.
-- Current brues pfQuest extractor execution.
-- Vanilla-only extractor patching in the temporary CI clone.
+- VMaNGOS snapshot download/import and migration application.
+- Current brues pfQuest extractor execution in Vanilla-only mode.
 - Generated-data namespace rewrite and brues overwrite reapplication.
-- Generated DB validation.
-- Automatic dev patch version bump on DB refresh.
-- Automatic commit of generated DB back to `dev`.
+- Generated DB validation and automatic dev patch bump on DB refresh.
 - First successful full GitHub Actions regeneration:
   - Run: `36321208408`
-  - Result: success.
   - Generated at: `2026-09-27T13:24:16+00:00`
   - DB commit: `64984801331bf589fe63651efd66790a3a093c36`
-- Snapshot metadata parser fixed:
-  - `db-13b49dc.zip` now parses as `13b49dc`.
-  - Current `source.lua` metadata corrected without regenerating unchanged DB content.
-- Generated-vs-bundled DB review completed and recorded in `DB_DIFF_REPORT.md`.
-- Exact first SoloCraft test build prepared: `0.1.2-dev` / `22e7c4a63536abedc2533a4033b0dfdf9b3b5ecf`.
+- Snapshot parser fixed: `db-13b49dc.zip` parses as `13b49dc`.
+- Generated-vs-bundled DB review recorded in `DB_DIFF_REPORT.md`.
+- Rename build prepared: `0.1.3-dev` / `77c418b49d5c1f2049a7ee10df311790cb7e2326`.
 
 ## Static / Automated Checks
-- Full remote MariaDB import/extractor pipeline completed successfully for the underlying generated DB.
-- Generated DB validation completed successfully in CI.
-- Loader/source Lua syntax smoke tests completed in the successful regeneration workflow.
-- Source inspection confirmed brues' database reload/index rebuild hooks and ClassicAPI-owned geometry paths.
-- Snapshot parser expression independently checked against `db-13b49dc.zip` and returns `13b49dc`.
-- Diff review confirms quest ID coverage is unchanged at 4,433; the largest delta is object coverage plus coordinate/source mappings.
-- No redundant full regeneration was run for `0.1.2-dev`; the DB payload is the already-validated `6498480` output and this revision changes parser/source metadata plus documentation only.
+- Underlying `13b49dc` DB payload previously passed the full remote MariaDB import/extractor pipeline and generated-DB validation.
+- Rename commit intentionally used `[skip ci]`; no redundant full VMaNGOS extraction was run because record payload content is unchanged.
+- Diff inspection confirms generated record files were not rewritten; only `db/init.lua` adds the compatibility alias around the existing validated payload.
+- Updated Python regeneration/validation scripts pass Python syntax compilation.
+- TOC/source/loader/tooling changes were inspected against the committed diff.
+- A fresh repository-backed Lua/compiler run was not available in this chat environment: the execution container could not resolve GitHub for checkout, and no system Lua interpreter is installed there. Do not treat the rename build as having received a new Lua 5.0.3 compiler pass.
 
 ## Current Issues
-- No in-game runtime test has occurred.
-- The fixed snapshot parser has not yet been exercised by a fresh full regeneration run; the current metadata value was corrected directly from the known asset name.
-- Only enUS locale data is packaged in the initial development build.
+- `0.1.3-dev` has not yet been tested in game.
+- The fixed snapshot parser has not yet been exercised by a fresh full regeneration run.
+- Only enUS locale data is packaged.
+- Transitional legacy generated-data alias remains until the next real regeneration.
+- SoloCraft runtime does not fully match current VMaNGOS data. Confirmed example: item 20023 (Encoded Fragment) is Forest Ooze-only in current VMaNGOS/pfQuest data, while SoloCraft drops it from additional Azshara beasts. Upstream VMaNGOS commit `38d7360` (2023-03-14) introduced the removal of several broader drops. This is evidence for a separate SoloCraft-specific historical-data project, not a change to this repository's current-VMaNGOS contract.
 
 ## Testing
 
 ### Last Runtime Test
-- Version/commit: None.
-- Passed: None.
-- Failed: None.
-- Not tested: All in-game behaviour.
+- Version/commit: `0.1.2-dev` / `22e7c4a63536abedc2533a4033b0dfdf9b3b5ecf` (partial).
+- Passed: addon loaded; source metadata was present; snapshot was `13b49dc`.
+- Observed data mismatch: Encoded Fragment source mapping differs from SoloCraft live loot behaviour.
+- Not completed: full login/error, browser/search, NPC/object coverage, active quest tracking, and ClassicAPI map checklist.
+- Test stopped when the user removed the old-named addon from the local installation.
 
 ### Next Runtime Test
-1. Install exact `0.1.2-dev` / `22e7c4a63536abedc2533a4033b0dfdf9b3b5ecf` as folder `pfQuest_vMangosDB` beside current brues pfQuest on SoloCraft.
-2. Confirm login completes with no Lua errors.
-3. Confirm pfQuest browser/search still works.
-4. Check several NPC/object/quest locations, prioritizing objects because that is the largest DB delta.
-5. Confirm quest display/tracking still works on at least one active quest.
-6. Confirm ClassicAPI map/zone behaviour is unchanged.
-7. Record the result against this exact version/commit before any further addon-affecting revision.
+1. Install exact `0.1.3-dev` / `77c418b49d5c1f2049a7ee10df311790cb7e2326` as folder `pfQuest_db_VMaNGOS` beside current brues pfQuest.
+2. Confirm the AddOns list shows the new pfQuest-coloured `pfQuest_db_VMaNGOS` title and version `0.1.3-dev`.
+3. Log in and confirm there are no Lua errors.
+4. Confirm `pfQuest_db_VMaNGOS_loaded` is true and `pfQuest_db_VMaNGOS_source.vmangos_snapshot` is `13b49dc`.
+5. Confirm pfQuest browser/search works normally.
+6. Check several NPC and object locations, prioritizing objects.
+7. Confirm at least one active quest displays/tracks normally.
+8. Confirm ClassicAPI map/zone behaviour is unchanged.
+9. Bind the result to this exact version/commit before promotion.
 
 ## Planned / Next Work
-- Runtime-test `0.1.2-dev` on SoloCraft.
-- Exercise the fixed snapshot parser in the next real regeneration.
+- Runtime-test `0.1.3-dev`.
+- Exercise the fixed snapshot parser in the next real regeneration; that regeneration will also rewrite generated files directly to the new namespace.
 - Add other locales after the regeneration/runtime path is proven.
 - Promote a tested build to `main`.
 
 ## Deferred / Out of Scope
+- SoloCraft-specific historical VMaNGOS baseline/override database (candidate separate `pfQuest_SoloCraft` project).
 - TurtleWoW database support.
 - Learner/observation database.
 - pfQuest UI/features.
@@ -130,4 +128,4 @@
 - External/runtime prerequisites: brues-code/pfQuest and its required ClassicAPI setup.
 
 ## Exact Next Step
-Install and test exact `0.1.2-dev` / `22e7c4a63536abedc2533a4033b0dfdf9b3b5ecf` on SoloCraft, then record the point-by-point runtime result before any promotion to `main`.
+Install and runtime-test exact `0.1.3-dev` / `77c418b49d5c1f2049a7ee10df311790cb7e2326` as `Interface\\AddOns\\pfQuest_db_VMaNGOS`, then record the point-by-point result before any promotion to `main`.
