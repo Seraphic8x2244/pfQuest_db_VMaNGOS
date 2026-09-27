@@ -2,7 +2,7 @@
 ## Title: pfQuest_vMangosDB-dev
 ## Author: Seraphic8x2244
 ## Notes: Current VMaNGOS database companion for brues-code/pfQuest
-## Version: 0.1.0-dev
+## Version: 0.1.1-dev
 ## Dependencies: pfQuest
 
 db\init.lua
