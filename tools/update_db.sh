@@ -111,6 +111,8 @@ for file in creature_template.sql gameobject_template.sql item_template.sql ques
   mariadb -u mangos -pmangos vmangos < "$PTBR/$file"
 done
 
+mariadb -u mangos -pmangos < "$ROOT/tools/performance_indexes.sql"
+
 python3 "$ROOT/tools/patch_extractor.py" "$PFQUEST/toolbox/extractor.lua"
 
 (
