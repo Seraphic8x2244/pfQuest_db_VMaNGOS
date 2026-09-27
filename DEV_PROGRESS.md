@@ -113,7 +113,7 @@
 - Runtime-test `0.1.3-dev`.
 - Exercise the fixed snapshot parser in the next real regeneration; that regeneration will also rewrite generated files directly to the new namespace.
 - Add other locales after the regeneration/runtime path is proven.
-- Promote a tested build to `main`.
+- Promote `0.1.3` to `main` under the explicitly accepted validation debt above.
 
 ## Deferred / Out of Scope
 - SoloCraft-specific historical VMaNGOS baseline/override database (candidate separate `pfQuest_SoloCraft` project).
@@ -124,8 +124,8 @@
 
 ## Release / Promotion Notes
 - Main-only or release-only content to preserve: stable README/addon files once first release is accepted.
-- Known validation debt accepted for release: None.
+- Known validation debt accepted for `0.1.3` promotion: the renamed `0.1.3-dev` identity has not received a fresh in-game runtime pass or fresh Lua 5.0.3 compiler pass. The underlying `13b49dc` DB payload was previously validated in CI and the preceding `0.1.2-dev` identity was partially confirmed loading on SoloCraft. User explicitly authorized promotion to `main` with this debt.
 - External/runtime prerequisites: brues-code/pfQuest and its required ClassicAPI setup.
 
 ## Exact Next Step
-Install and runtime-test exact `0.1.3-dev` / `77c418b49d5c1f2049a7ee10df311790cb7e2326` as `Interface\\AddOns\\pfQuest_db_VMaNGOS`, then record the point-by-point result before any promotion to `main`.
+Promote `0.1.3-dev` to stable `0.1.3` on `main` without regenerating the `13b49dc` DB payload, using a simple README that identifies VMaNGOS DB snapshot `13b49dc`; then record the resulting stable commit and runtime-test that stable tree.
