@@ -13,7 +13,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: vmangos-db-update
+  group: vmangos-db-update-optimized
   cancel-in-progress: true
 
 jobs:
