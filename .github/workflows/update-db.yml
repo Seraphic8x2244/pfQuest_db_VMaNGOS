@@ -38,6 +38,7 @@ jobs:
             mariadb-server \
             mariadb-client \
             libmariadb-dev \
+            libmariadb-dev-compat \
             lua5.1 \
             liblua5.1-0-dev \
             luarocks
