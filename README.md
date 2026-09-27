@@ -1,4 +1,4 @@
-# pfQuest_vMangosDB
+# pfQuest_db_VMaNGOS
 
 A companion database addon for `brues-code/pfQuest` that replaces pfQuest's bundled Vanilla world data with data regenerated from current VMaNGOS sources, while leaving pfQuest itself untouched and independently updatable.
 
