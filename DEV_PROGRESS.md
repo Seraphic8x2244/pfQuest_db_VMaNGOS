@@ -4,7 +4,7 @@
 - Branch: `dev`
 - Version: `0.1.3-dev`
 - Development head: `77c418b49d5c1f2049a7ee10df311790cb7e2326`
-- Stable baseline: None.
+- Stable baseline: `0.1.3` / `4a82887e97b2fb4fcfdd77489869607554bdf54e` on `main`.
 - Repository/addon identity: `pfQuest_db_VMaNGOS`.
 - Goal: Build a database-only companion for brues' pfQuest that regenerates Vanilla world data from current VMaNGOS sources.
 - Current scope boundary: current VMaNGOS DB only. No SoloCraft-specific historical DB, Turtle support, pfQuest fork, or UI/gameplay features.
@@ -113,7 +113,7 @@
 - Runtime-test `0.1.3-dev`.
 - Exercise the fixed snapshot parser in the next real regeneration; that regeneration will also rewrite generated files directly to the new namespace.
 - Add other locales after the regeneration/runtime path is proven.
-- Promote `0.1.3` to `main` under the explicitly accepted validation debt above.
+- Runtime-test stable `0.1.3` from `main` and record the result against commit `4a82887e97b2fb4fcfdd77489869607554bdf54e`.
 
 ## Deferred / Out of Scope
 - SoloCraft-specific historical VMaNGOS baseline/override database (candidate separate `pfQuest_SoloCraft` project).
@@ -123,9 +123,9 @@
 - Changes to brues' pfQuest repository.
 
 ## Release / Promotion Notes
-- Main-only or release-only content to preserve: stable README/addon files once first release is accepted.
+- Main stable release: `0.1.3` / `4a82887e97b2fb4fcfdd77489869607554bdf54e`. Stable README identifies VMaNGOS snapshot `13b49dc`; `DEV_PROGRESS.md` is excluded from `main`.
 - Known validation debt accepted for `0.1.3` promotion: the renamed `0.1.3-dev` identity has not received a fresh in-game runtime pass or fresh Lua 5.0.3 compiler pass. The underlying `13b49dc` DB payload was previously validated in CI and the preceding `0.1.2-dev` identity was partially confirmed loading on SoloCraft. User explicitly authorized promotion to `main` with this debt.
 - External/runtime prerequisites: brues-code/pfQuest and its required ClassicAPI setup.
 
 ## Exact Next Step
-Promote `0.1.3-dev` to stable `0.1.3` on `main` without regenerating the `13b49dc` DB payload, using a simple README that identifies VMaNGOS DB snapshot `13b49dc`; then record the resulting stable commit and runtime-test that stable tree.
+Install and runtime-test stable `0.1.3` / `4a82887e97b2fb4fcfdd77489869607554bdf54e` from `main` as `Interface\\AddOns\\pfQuest_db_VMaNGOS`, then record the point-by-point result. The DB payload remains snapshot `13b49dc`.
