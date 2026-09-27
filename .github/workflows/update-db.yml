@@ -14,7 +14,7 @@ permissions:
 
 concurrency:
   group: vmangos-db-update
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   update:
