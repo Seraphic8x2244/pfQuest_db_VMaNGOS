@@ -116,7 +116,7 @@ python3 "$ROOT/tools/patch_extractor.py" "$PFQUEST/toolbox/extractor.lua"
 (
   cd "$PFQUEST/toolbox"
   rm -rf output
-  lua5.1 ./extractor.lua
+  lua5.3 ./extractor.lua
 )
 
 python3 "$ROOT/tools/package_db.py" \
