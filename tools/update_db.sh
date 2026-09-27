@@ -111,24 +111,6 @@ for file in creature_template.sql gameobject_template.sql item_template.sql ques
   mariadb -u mangos -pmangos vmangos < "$PTBR/$file"
 done
 
-mariadb -u mangos -pmangos <<'SQL'
-USE vmangos;
-CREATE INDEX IF NOT EXISTS idx_cse_guid ON creature_spawn_entry(guid);
-CREATE INDEX IF NOT EXISTS idx_cse_entry ON creature_spawn_entry(entry);
-CREATE INDEX IF NOT EXISTS idx_guid_map_position ON creature(guid, map, position_x, position_y);
-CREATE INDEX IF NOT EXISTS idx_gse_guid ON gameobject_spawn_entry(guid);
-CREATE INDEX IF NOT EXISTS idx_gse_entry ON gameobject_spawn_entry(entry);
-CREATE INDEX IF NOT EXISTS idx_got_data1 ON gameobject_template(data1);
-CREATE INDEX IF NOT EXISTS idx_golt_entry ON gameobject_loot_template(entry);
-CREATE INDEX IF NOT EXISTS idx_npcvt_entry ON npc_vendor_template(entry);
-CREATE INDEX IF NOT EXISTS idx_ct_entry ON creature_template(entry);
-
-USE pfquest;
-CREATE INDEX IF NOT EXISTS idx_wma_vanilla_sizes ON WorldMapArea_vanilla(x_min, x_max, y_min, y_max);
-CREATE INDEX IF NOT EXISTS idx_wma_vanilla_mapid ON WorldMapArea_vanilla(mapID);
-CREATE INDEX IF NOT EXISTS idx_wma_vanilla_area ON WorldMapArea_vanilla(areatableID);
-SQL
-
 python3 "$ROOT/tools/patch_extractor.py" "$PFQUEST/toolbox/extractor.lua"
 
 (
