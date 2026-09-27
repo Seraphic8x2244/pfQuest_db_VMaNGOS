@@ -1,4 +1,4 @@
-# pfQuest_vMangosDB
+# pfQuest_db_VMaNGOS
 
 A database-only companion addon for [brues-code/pfQuest](https://github.com/brues-code/pfQuest).
 
@@ -32,10 +32,10 @@ When a generated build is ready, the addon layout is:
 ```text
 Interface/AddOns/
   pfQuest/
-  pfQuest_vMangosDB/
+  pfQuest_db_VMaNGOS/
 ```
 
-Enable both. `pfQuest_vMangosDB` declares `pfQuest` as a dependency and loads after it.
+Enable both. `pfQuest_db_VMaNGOS` declares `pfQuest` as a dependency and loads after it.
 
 ## Database refresh
 
@@ -46,7 +46,7 @@ The `Update VMaNGOS DB` GitHub Actions workflow:
 3. imports the VMaNGOS snapshot and pfQuest client data into MariaDB;
 4. applies VMaNGOS world migrations;
 5. runs brues' extractor in Vanilla-only mode;
-6. rewrites generated `pfDB` assignments into the private `pfQuest_vMangosDB_data` namespace;
+6. rewrites generated `pfDB` assignments into the private `pfQuest_db_VMaNGOS_data` namespace;
 7. reapplies brues' current `overwrites.lua` to that generated namespace;
 8. validates the result;
 9. bumps the dev patch version and commits the refreshed DB to `dev` when data changed.

@@ -62,9 +62,9 @@ jobs:
             exit 0
           fi
 
-          VERSION="$(python3 tools/bump_dev_version.py pfQuest_vMangosDB.toc)"
+          VERSION="$(python3 tools/bump_dev_version.py pfQuest_db_VMaNGOS.toc)"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add db source.lua pfQuest_vMangosDB.toc
+          git add db source.lua pfQuest_db_VMaNGOS.toc
           git commit -m "db: refresh VMaNGOS data (${VERSION})"
           git push origin HEAD:dev

@@ -1,4 +1,4 @@
-pfQuest_vMangosDB_source = {
+pfQuest_db_VMaNGOS_source = {
   ["schema"] = 1,
   ["generated"] = true,
   ["generated_utc"] = "2026-09-27T13:24:16+00:00",

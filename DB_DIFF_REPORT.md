@@ -4,7 +4,7 @@ Comparison target:
 
 - Regenerated DB: VMaNGOS snapshot `db-13b49dc.zip` (`13b49dc`), generated in commit `64984801331bf589fe63651efd66790a3a093c36`.
 - Bundled baseline: brues-code/pfQuest commit `6b2283f7a53ba92c83c21a13eb7f7b9ca3b53658`.
-- Method: record-by-record comparison of the generated datasets that this companion replaces. Namespace-only `pfDB` -> `pfQuest_vMangosDB_data` differences are ignored conceptually.
+- Method: record-by-record comparison of the generated datasets that this companion replaces. Namespace-only `pfDB` -> companion private DB namespace differences are ignored conceptually.
 - brues' `overwrites.lua` is preserved exactly apart from that namespace rewrite.
 
 ## Record summary

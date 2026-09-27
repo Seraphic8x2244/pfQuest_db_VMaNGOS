@@ -16,7 +16,7 @@ CORE_FILES = [
 ENUS_FILES = ["items.lua", "units.lua", "objects.lua", "quests.lua"]
 
 def rewrite(text):
-    return text.replace("pfDB", "pfQuest_vMangosDB_data")
+    return text.replace("pfDB", "pfQuest_db_VMaNGOS_data")
 
 def lua_quote(value):
     value = value.replace("\\", "\\\\").replace('"', '\\"').replace("\n", "\\n")
@@ -42,7 +42,7 @@ def main():
     enus.mkdir(parents=True, exist_ok=True)
 
     (db / "init.lua").write_text(
-        """pfQuest_vMangosDB_data = {
+        """pfQuest_db_VMaNGOS_data = {
   ["items"] = {},
   ["units"] = {},
   ["objects"] = {},
@@ -91,7 +91,7 @@ def main():
         ("pfquest_commit", lua_quote(args.pfquest_commit)),
     ]
 
-    lines = ["pfQuest_vMangosDB_source = {"]
+    lines = ["pfQuest_db_VMaNGOS_source = {"]
     for key, value in fields:
         lines.append('  ["' + key + '"] = ' + value + ",")
     lines.append("}")

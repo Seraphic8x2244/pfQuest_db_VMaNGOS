@@ -1,8 +1,9 @@
-local ADDON_NAME = "pfQuest_vMangosDB"
+local ADDON_NAME = "pfQuest_db_VMaNGOS"
+local ADDON_LABEL = "|cff33ffccpf|cffffffffQuest|cff33ffcc_db_VMaNGOS|r"
 
 local function message(text)
   if DEFAULT_CHAT_FRAME then
-    DEFAULT_CHAT_FRAME:AddMessage("|cff33ffcc" .. ADDON_NAME .. "|r: " .. text)
+    DEFAULT_CHAT_FRAME:AddMessage(ADDON_LABEL .. ": " .. text)
   end
 end
 
@@ -20,8 +21,8 @@ local function replace_table(target, source)
   end
 end
 
-local source_info = pfQuest_vMangosDB_source
-local addon_db = pfQuest_vMangosDB_data
+local source_info = pfQuest_db_VMaNGOS_source
+local addon_db = pfQuest_db_VMaNGOS_data
 
 if not source_info or not source_info.generated then
   return
@@ -90,7 +91,8 @@ if pfDatabase.BuildStaticRejectSet then
   pfDatabase:BuildStaticRejectSet()
 end
 
-pfQuest_vMangosDB_loaded = true
+pfQuest_db_VMaNGOS_loaded = true
+pfQuest_db_VMaNGOS_data = nil
 pfQuest_vMangosDB_data = nil
 
 if collectgarbage then
