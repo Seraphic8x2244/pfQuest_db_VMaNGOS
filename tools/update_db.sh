@@ -20,7 +20,7 @@ RELEASE_JSON="$(curl -fsSL https://api.github.com/repos/vmangos/core/releases/ta
 VMANGOS_RELEASE="$(python3 -c 'import json,sys; print(json.load(sys.stdin)["name"])' <<<"$RELEASE_JSON")"
 ASSET_URL="$(python3 -c 'import json,sys; r=json.load(sys.stdin); print(next(a["browser_download_url"] for a in r["assets"] if a["name"].endswith(".zip") and "sqlite" not in a["name"]))' <<<"$RELEASE_JSON")"
 ASSET_NAME="$(basename "$ASSET_URL")"
-VMANGOS_SNAPSHOT="$(python3 -c 'import re,sys; m=re.search(r"db-([0-9a-f]+)\\.zip$", sys.argv[1]); print(m.group(1) if m else "unknown")' "$ASSET_NAME")"
+VMANGOS_SNAPSHOT="$(python3 -c 'import re,sys; m=re.search(r"db-([0-9a-f]+)\.zip$", sys.argv[1]); print(m.group(1) if m else "unknown")' "$ASSET_NAME")"
 
 curl -fL --retry 3 "$ASSET_URL" -o "$WORK/$ASSET_NAME"
 unzip -q "$WORK/$ASSET_NAME" -d "$SNAPSHOT"
